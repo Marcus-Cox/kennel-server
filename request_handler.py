@@ -1,16 +1,20 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals, get_single_animal
+from views import get_single_location, get_all_locations
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
 # work together for a common purpose. In this case, that
 # common purpose is to respond to HTTP requests from a client.
+
+
 class HandleRequests(BaseHTTPRequestHandler):
     # This is a Docstring it should be at the beginning of all classes and functions
     # It gives a description of the class or function
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
     """
+
     def parse_url(self, path):
         """takes a single input - the path of the request - and returns a tuple
 
@@ -74,21 +78,36 @@ class HandleRequests(BaseHTTPRequestHandler):
         #         {"id": 1, "name": "Snickers", "species": "Dog"},
         #         {"id": 2, "name": "Lenny", "species": "Cat"}
         #     ]
-            #     else:
-            # response = []
+        #     else:
+        # response = []
         # New Code makes use of the Imported Method get_all_animals
 
-        if self.path == "/animals":
-            response = get_all_animals()
-        else:
-            response = []
+        # if self.path == "/animals":
+        #     response = get_all_animals()
+        # else:
+        #     response = []
 
+        # # Send a JSON formatted string as a response
+        # self.wfile.write(json.dumps(response).encode())
 
-        # Send a JSON formatted string as a response
+        if resource == "locations":
+            if id is not None:
+                response = get_single_location(id)
+            else:
+                response = get_all_locations()
+
         self.wfile.write(json.dumps(response).encode())
+
+        # if self.path == "/locations":
+        #     response = get_all_locations()
+        # else:
+        #     response = []
+
+        # self.wfile.write(json.dumps(response).encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
+
     def do_POST(self):
         """Handles POST requests to the server"""
 
