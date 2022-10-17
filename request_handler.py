@@ -67,7 +67,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_animals()
 
-        self.wfile.write(json.dumps(response).encode())
         # Your new console.log() that outputs to the terminal
         print(self.path)
 
@@ -98,7 +97,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_locations()
 
-        self.wfile.write(json.dumps(response).encode())
 
         # if self.path == "/locations":
         #     response = get_all_locations()
@@ -113,7 +111,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_customers()
 
-        self.wfile.write(json.dumps(response).encode())
 
         if resource == "employees":
             if id is not None:
