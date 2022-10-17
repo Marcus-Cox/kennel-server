@@ -2,6 +2,8 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals, get_single_animal
 from views import get_single_location, get_all_locations
+from views import get_single_customer,get_all_customers
+from views import get_single_employee,get_all_employees
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -104,6 +106,22 @@ class HandleRequests(BaseHTTPRequestHandler):
         #     response = []
 
         # self.wfile.write(json.dumps(response).encode())
+
+        if resource == "customers":
+            if id is not None:
+                response = get_single_customer(id)
+            else:
+                response = get_all_customers()
+
+        self.wfile.write(json.dumps(response).encode())
+
+        if resource == "employees":
+            if id is not None:
+                response = get_single_employee(id)
+            else:
+                response = get_all_employees()
+        self.wfile.write(json.dumps(response).encode())
+
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
