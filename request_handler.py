@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
+from views import get_all_animals
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -25,17 +25,24 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Your new console.log() that outputs to the terminal
         print(self.path)
 
+        # Start of Old Beginning Code. Has an List of Dictionaries that are placeholder
         # It's an if..else statement
-        if self.path == "/animals":
-            # In Python, this is a list of dictionaries
-            # In JavaScript, you would call it an array of objects
-            response = [
-                {"id": 1, "name": "Snickers", "species": "Dog"},
-                {"id": 2, "name": "Lenny", "species": "Cat"}
-            ]
+        # if self.path == "/animals":
+        #     # In Python, this is a list of dictionaries
+        #     # In JavaScript, you would call it an array of objects
+        #     response = [
+        #         {"id": 1, "name": "Snickers", "species": "Dog"},
+        #         {"id": 2, "name": "Lenny", "species": "Cat"}
+        #     ]
+            #     else:
+            # response = []
+        # New Code makes use of the Imported Method get_all_animals
 
+        if self.path == "/animals":
+            response = get_all_animals()
         else:
             response = []
+
 
         # Send a JSON formatted string as a response
         self.wfile.write(json.dumps(response).encode())
