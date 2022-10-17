@@ -59,3 +59,35 @@ def get_single_animal(id):
     # line 61 returns the value of requested_animal.
     # It will either be None, or the dictionary that it found.
     return requested_animal
+
+def create_animal(animal):
+    """Code For Creating Animals
+
+    Args:
+        animal (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # Get the id value of the last animal in the list
+    max_id = ANIMALS[-1]["id"]
+
+    # Add 1 to whatever that number is
+    new_id = max_id + 1
+
+    # Add an `id` property to the animal dictionary
+    animal["id"] = new_id
+
+    # Add the animal dictionary to the list
+    ANIMALS.append(animal)
+
+    # Return the dictionary with `id` property added
+    return animal
+
+#created animal example
+# {
+#     "name": "Falafel",
+#     "species": "Cat",
+#     "locationId": 1,
+#     "customerId": 3
+# }

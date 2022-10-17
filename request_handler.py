@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_animals, get_single_animal
+from views import get_all_animals, get_single_animal,create_animal
 from views import get_single_location, get_all_locations
 from views import get_single_customer,get_all_customers
 from views import get_single_employee,get_all_employees
@@ -124,16 +124,29 @@ class HandleRequests(BaseHTTPRequestHandler):
     # It handles any POST request.
 
     def do_POST(self):
-        """Handles POST requests to the server"""
-
-        # Set response code to 'Created'
+        """Handles POST requests on the Server
+        """
         self._set_headers(201)
-
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
-        response = {"payload": post_body}
-        self.wfile.write(json.dumps(response).encode())
 
+        # Convert JSON string to a Python dictionary
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Initialize new animal
+        new_animal = None
+        # Add a new animal to the list. Don't worry about
+        # the orange squiggle, you'll define the create_animal
+        # function next.
+        if resource == "animals":
+            new_animal = create_animal(post_body)
+
+        # Encode the new animal and send in response
+        self.wfile.write(json.dumps(new_animal).encode())
+        
     # A method that handles any PUT request.
     def do_PUT(self):
         """Handles PUT requests to the server"""
