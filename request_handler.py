@@ -167,7 +167,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(new_animal).encode())
 
         if resource == "locations":
-            new_location == create_location(post_body)
+            new_location = create_location(post_body)
         self.wfile.write(json.dumps(new_location).encode())
 
         if resource == "employees":
