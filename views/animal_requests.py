@@ -1,4 +1,7 @@
-#Constant named ANIMALS
+import sqlite3
+import json
+from models import Animal
+# Constant named ANIMALS
 ANIMALS = [
     {
         # In Python, this is a list of dictionaries
@@ -30,40 +33,86 @@ ANIMALS = [
 ]
 
 # In Python a function is defined using the def keyword
-def get_all_animals():
-    """function to get all animals in the list of dictionaries
 
-    Returns:
-        _type_: ANIMALS
-    """
-    return ANIMALS
+
+def get_all_animals():
+    """Used to get all animals from the database"""
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        """)
+
+        # Initialize an empty list to hold all animal representations
+        animals = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an animal instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Animal class above.
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['status'], row['location_id'],
+                            row['customer_id'])
+
+            animals.append(animal.__dict__)
+
+    return animals
 
 # the terms parameter and argument can be used for the same thing:
 # information that are passed into a function
 # An argument is the value that is sent to the function when it is called.
 # This is a Function with a single parameter, id
+
+
 def get_single_animal(id):
-    """_summary_
+    """used to get a single animal from the data base"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    Args:
-        id (_type_): _description_
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        WHERE a.id = ?
+        """, (id, ))
 
-    Returns:
-        _type_: requested_animal
-    """
-    # Variable to hold the found animal, if it exists
-    requested_animal = None
+        # Load the single result into memory
+        data = db_cursor.fetchone()
 
-    # Iterate the ANIMALS list above. Very similar to the
-    # for..of loops you used in JavaScript.
-    for animal in ANIMALS:
-        # Dictionaries in Python use [] notation to find a key
-        # instead of the dot notation that JavaScript used.
-        if animal["id"] == id:
-            requested_animal = animal
-    # line 61 returns the value of requested_animal.
-    # It will either be None, or the dictionary that it found.
-    return requested_animal
+        # Create an animal instance from the current row
+        animal = Animal(data['id'], data['name'], data['breed'],
+                        data['status'], data['location_id'],
+                        data['customer_id'])
+
+        return animal.__dict__
+
 
 def create_animal(animal):
     """Code For Creating Animals
@@ -89,13 +138,14 @@ def create_animal(animal):
     # Return the dictionary with `id` property added
     return animal
 
-#created animal example
+# created animal example
 # {
 #     "name": "Falafel",
 #     "species": "Cat",
 #     "locationId": 1,
 #     "customerId": 3
 # }
+
 
 def delete_animal(id):
     """_summary_
@@ -116,6 +166,7 @@ def delete_animal(id):
     # If the animal was found, use pop(int) to remove it from list
     if animal_index >= 0:
         ANIMALS.pop(animal_index)
+
 
 def update_animal(id, new_animal):
     """_summary_

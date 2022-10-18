@@ -8,8 +8,9 @@ EMPLOYEES = [
     },
     {"id": 2,
      "name": "David Blane"
-    }
+     }
 ]
+
 
 def get_all_employees():
     """_summary_
@@ -18,6 +19,7 @@ def get_all_employees():
         _type_: _description_
     """
     return EMPLOYEES
+
 
 def get_single_employee(id):
     """_summary_
@@ -34,6 +36,7 @@ def get_single_employee(id):
         if employee["id"] == id:
             requested_employee = employee
     return requested_employee
+
 
 def create_employee(employee):
     """Code for Creating employees
