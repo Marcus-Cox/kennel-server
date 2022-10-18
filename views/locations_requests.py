@@ -1,3 +1,5 @@
+import sqlite3
+import json
 LOCATIONS = [
     {
         "id": 1,
@@ -11,6 +13,7 @@ LOCATIONS = [
     }
 ]
 
+
 def get_all_locations():
     """Python Function that gets all locations
 
@@ -18,6 +21,7 @@ def get_all_locations():
         _type_: Locations
     """
     return LOCATIONS
+
 
 def get_single_location(id):
     """Python function to return a single Location
@@ -31,6 +35,7 @@ def get_single_location(id):
         if location["id"] == id:
             requested_location = location
     return requested_location
+
 
 def create_location(location):
     """Code for Creating locations
@@ -47,3 +52,13 @@ def create_location(location):
     LOCATIONS.append(location)
 
     return location
+
+
+def delete_location(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM location
+        WHERE id = ?
+        """, (id, ))

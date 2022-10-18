@@ -1,4 +1,5 @@
-import re
+import json
+import sqlite3
 
 
 EMPLOYEES = [
@@ -53,3 +54,13 @@ def create_employee(employee):
     EMPLOYEES.append(employee)
 
     return employee
+
+
+def delete_employee(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM employee
+        WHERE id = ?
+        """, (id, ))

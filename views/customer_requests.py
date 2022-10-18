@@ -57,6 +57,16 @@ def create_customer(customer):
 # }
 
 
+def delete_customer(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM customer
+        WHERE id = ?
+        """, (id, ))
+
+
 def get_customers_by_email(email):
 
     with sqlite3.connect("./kennel.sqlite3") as conn:
