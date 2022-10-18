@@ -1,9 +1,9 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_animals, get_single_animal,create_animal,delete_animal,update_animal
-from views import get_single_location, get_all_locations,create_location
-from views import get_single_customer,get_all_customers,create_customer
-from views import get_single_employee,get_all_employees,create_employee
+from views import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
+from views import get_single_location, get_all_locations, create_location
+from views import get_single_customer, get_all_customers, create_customer
+from views import get_single_employee, get_all_employees, create_employee
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -97,7 +97,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_locations()
 
-
         # if self.path == "/locations":
         #     response = get_all_locations()
         # else:
@@ -111,14 +110,12 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_customers()
 
-
         if resource == "employees":
             if id is not None:
                 response = get_single_employee(id)
             else:
                 response = get_all_employees()
         self.wfile.write(json.dumps(response).encode())
-
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
@@ -146,7 +143,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         # function next.
         if resource == "animals":
             new_animal = create_animal(post_body)
-              # Encode the new animal and send in response
+            # Encode the new animal and send in response
 
         self.wfile.write(json.dumps(new_animal).encode())
 
@@ -207,7 +204,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_DELETE(self):
-    # Set a 204 response code
+        # Set a 204 response code
         self._set_headers(204)
 
     # Parse the URL
@@ -222,6 +219,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
 # This function is not inside the class. It is the starting
 # point of this application.
+
+
 def main():
     """Starts the server on port 8088 using the HandleRequests class
     """
