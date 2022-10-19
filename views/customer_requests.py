@@ -14,26 +14,79 @@ CUSTOMERS = [
 
 
 def get_all_customers():
-    """Python Function that gets all customers
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.sqlite3") as conn:
 
-    Returns:
-        _type_: customers
-    """
-    return CUSTOMERS
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address,
+            a.email,
+            a.password
+        FROM customer a
+        """)
+
+        # Initialize an empty list to hold all customer representations
+        customers = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an customer instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Customer class above.
+            customer = Customer(row['id'], row['name'], row['address'],
+                                row['email'], row['password'])
+
+            customers.append(customer.__dict__)
+
+    # Use `json` package to properly serialize list as JSON
+    return customers
 
 
 def get_single_customer(id):
-    """Python function to return a single customer
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    Args:
-        id (_type_): _description_
-    """
-    requested_customer = None
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address,
+            a.email,
+            a.password
+        FROM customer a
+        WHERE a.id = ?
+        """, (id, ))
 
-    for customer in CUSTOMERS:
-        if customer["id"] == id:
-            requested_customer = customer
-    return requested_customer
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        customer = Customer(data['id'], data['name'], data['address'],
+                            data['email'], data['password'])
+
+        return customer.__dict__
+
+    # requested_customer = None
+
+    # for customer in CUSTOMERS:
+    #     if customer["id"] == id:
+    #         requested_customer = customer
+    # return requested_customer
 
 
 def create_customer(customer):
@@ -67,9 +120,12 @@ def delete_customer(id):
         WHERE id = ?
         """, (id, ))
 
+# use the following template to query a customer by email in postman
+# http://localhost:8088/customers?email=name@name.com
+
 
 def get_customers_by_email(email):
-
+    """code for getting customers by email"""
     with sqlite3.connect("./kennel.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
