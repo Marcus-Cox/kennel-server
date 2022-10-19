@@ -56,7 +56,24 @@ def create_employee(employee):
     return employee
 
 
+def update_employee(id, new_employee):
+    """_summary_
+
+    Args:
+        id (_type_): _description_
+        new_employee (_type_): _description_
+    """
+    # Iterate the EMPLOYEES list, but use enumerate() so that
+    # you can access the index value of each item.
+    for index, employee in enumerate(EMPLOYEES):
+        if employee["id"] == id:
+            # Found the employee. Update the value.
+            EMPLOYEES[index] = new_employee
+            break
+
+
 def delete_employee(id):
+    """code used to delete an employee"""
     with sqlite3.connect("./kennel.sqlite3") as conn:
         db_cursor = conn.cursor()
 

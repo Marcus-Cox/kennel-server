@@ -2,9 +2,9 @@ import json
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
-from views import get_single_location, get_all_locations, create_location
-from views import get_single_customer, get_all_customers, create_customer, get_customers_by_email
-from views import get_single_employee, get_all_employees, create_employee
+from views import get_single_location, get_all_locations, create_location, update_location
+from views import get_single_customer, get_all_customers, create_customer, update_customer, get_customers_by_email
+from views import get_single_employee, get_all_employees, create_employee, update_employee
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -57,6 +57,17 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_customer(id)}"
                 else:
                     response = f"{get_all_customers()}"
+            elif resource == "locations":
+                if id is not None:
+                    response = f"{get_single_location}"
+                else:
+                    response = f"{get_all_locations}"
+            elif resource == "employees":
+                if id is not None:
+                    response = f"{get_single_employee}"
+                else:
+                    response = f"{get_all_employees}"
+
         else:  # There is a ? in the path, run the query param functions
             (resource, query) = parsed
 
@@ -193,6 +204,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Delete a single animal from the list
         if resource == "animals":
             update_animal(id, post_body)
+
+        if resource == "customers":
+            update_customer(id, post_body)
+
+        if resource == "locations":
+            update_location(id, post_body)
+
+        if resource == "employees":
+            update_employee(id, post_body)
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())

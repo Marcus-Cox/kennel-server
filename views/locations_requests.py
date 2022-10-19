@@ -54,7 +54,24 @@ def create_location(location):
     return location
 
 
+def update_location(id, new_location):
+    """_summary_
+
+    Args:
+        id (_type_): _description_
+        new_location (_type_): _description_
+    """
+    # Iterate the LOCATIONS list, but use enumerate() so that
+    # you can access the index value of each item.
+    for index, location in enumerate(LOCATIONS):
+        if location["id"] == id:
+            # Found the location. Update the value.
+            LOCATIONS[index] = new_location
+            break
+
+
 def delete_location(id):
+    """code to used to delete a location"""
     with sqlite3.connect("./kennel.sqlite3") as conn:
         db_cursor = conn.cursor()
 
