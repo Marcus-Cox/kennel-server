@@ -1,3 +1,6 @@
+import sqlite3
+import json
+from models import Location
 LOCATIONS = [
     {
         "id": 1,
@@ -11,26 +14,69 @@ LOCATIONS = [
     }
 ]
 
-def get_all_locations():
-    """Python Function that gets all locations
 
-    Returns:
-        _type_: Locations
-    """
-    return LOCATIONS
+def get_all_locations():
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address
+        FROM location a
+        """)
+
+        # Initialize an empty list to hold all animal representations
+        locations = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an animal instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Animal class above.
+            location = Location(row['id'], row['name'], row['address'])
+
+            locations.append(location.__dict__)
+
+    # Use `json` package to properly serialize list as JSON
+    return locations
+
 
 def get_single_location(id):
-    """Python function to return a single Location
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    Args:
-        id (_type_): _description_
-    """
-    requested_location = None
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address 
+        FROM location a
+        WHERE a.id = ?
+        """, (id, ))
 
-    for location in LOCATIONS:
-        if location["id"] == id:
-            requested_location = location
-    return requested_location
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an location instance from the current row
+        location = Location(data['id'], data['name'], data['address'])
+
+        return location.__dict__
+
 
 def create_location(location):
     """Code for Creating locations
@@ -47,3 +93,30 @@ def create_location(location):
     LOCATIONS.append(location)
 
     return location
+
+
+def update_location(id, new_location):
+    """_summary_
+
+    Args:
+        id (_type_): _description_
+        new_location (_type_): _description_
+    """
+    # Iterate the LOCATIONS list, but use enumerate() so that
+    # you can access the index value of each item.
+    for index, location in enumerate(LOCATIONS):
+        if location["id"] == id:
+            # Found the location. Update the value.
+            LOCATIONS[index] = new_location
+            break
+
+
+def delete_location(id):
+    """code to used to delete a location"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM location
+        WHERE id = ?
+        """, (id, ))
