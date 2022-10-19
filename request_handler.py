@@ -218,8 +218,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         elif resource == "employees":
             success = update_employee(id, post_body)
 
-        elif success:
-            success = self._set_headers(204)
+        if success:
+            self._set_headers(204)
         else:
             self._set_headers(404)
         # Encode the new animal and send in response
