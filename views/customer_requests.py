@@ -75,7 +75,7 @@ def get_single_customer(id):
         # Load the single result into memory
         data = db_cursor.fetchone()
 
-        # Create an animal instance from the current row
+        # Create an customer instance from the current row
         customer = Customer(data['id'], data['name'], data['address'],
                             data['email'], data['password'])
 
@@ -154,16 +154,27 @@ def get_customers_by_email(email):
 
 
 def update_customer(id, new_customer):
-    """_summary_
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
 
-    Args:
-        id (_type_): _description_
-        new_customer (_type_): _description_
-    """
-    # Iterate the CUSTOMERS list, but use enumerate() so that
-    # you can access the index value of each item.
-    for index, customer in enumerate(CUSTOMERS):
-        if customer["id"] == id:
-            # Found the customer. Update the value.
-            CUSTOMERS[index] = new_customer
-            break
+        db_cursor.execute("""
+        UPDATE Customer
+            SET
+                name = ?,
+                address = ?,
+                email = ?,
+                password = ?
+        WHERE id = ?
+        """, (new_customer['name'], new_customer['address'],
+              new_customer['email'], new_customer['password'], id, ))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+    else:
+        # Forces 204 response by main module
+        return True

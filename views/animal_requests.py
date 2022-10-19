@@ -216,17 +216,45 @@ def delete_animal(id):
         """, (id, ))
 
 
-def update_animal(id, new_animal):
-    """_summary_
+# def update_animal(id, new_animal):
+#     """_summary_
 
-    Args:
-        id (_type_): _description_
-        new_animal (_type_): _description_
-    """
-    # Iterate the ANIMALS list, but use enumerate() so that
-    # you can access the index value of each item.
-    for index, animal in enumerate(ANIMALS):
-        if animal["id"] == id:
-            # Found the animal. Update the value.
-            ANIMALS[index] = new_animal
-            break
+#     Args:
+#         id (_type_): _description_
+#         new_animal (_type_): _description_
+#     """
+#     # Iterate the ANIMALS list, but use enumerate() so that
+#     # you can access the index value of each item.
+#     for index, animal in enumerate(ANIMALS):
+#         if animal["id"] == id:
+#             # Found the animal. Update the value.
+#             ANIMALS[index] = new_animal
+#             break
+
+def update_animal(id, new_animal):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Animal
+            SET
+                name = ?,
+                breed = ?,
+                status = ?,
+                location_id = ?,
+                customer_id = ?
+        WHERE id = ?
+        """, (new_animal['name'], new_animal['breed'],
+              new_animal['status'], new_animal['locationId'],
+              new_animal['customerId'], id, ))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+    else:
+        # Forces 204 response by main module
+        return True
