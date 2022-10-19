@@ -32,7 +32,7 @@ def get_all_locations():
         FROM location a
         """)
 
-        # Initialize an empty list to hold all animal representations
+        # Initialize an empty list to hold all location representations
         locations = []
 
         # Convert rows of data into a Python list
@@ -41,10 +41,10 @@ def get_all_locations():
         # Iterate list of data returned from database
         for row in dataset:
 
-            # Create an animal instance from the current row.
+            # Create an location instance from the current row.
             # Note that the database fields are specified in
             # exact order of the parameters defined in the
-            # Animal class above.
+            # Location class above.
             location = Location(row['id'], row['name'], row['address'])
 
             locations.append(location.__dict__)
@@ -96,19 +96,32 @@ def create_location(location):
 
 
 def update_location(id, new_location):
-    """_summary_
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
 
-    Args:
-        id (_type_): _description_
-        new_location (_type_): _description_
-    """
-    # Iterate the LOCATIONS list, but use enumerate() so that
-    # you can access the index value of each item.
-    for index, location in enumerate(LOCATIONS):
-        if location["id"] == id:
-            # Found the location. Update the value.
-            LOCATIONS[index] = new_location
-            break
+        db_cursor.execute("""
+        UPDATE Location
+            SET
+                name = ?,
+                breed = ?,
+                status = ?,
+                location_id = ?,
+                customer_id = ?
+        WHERE id = ?
+        """, (new_location['name'], new_location['breed'],
+              new_location['status'], new_location['locationId'],
+              new_location['customerId'], id, ))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+    else:
+        # Forces 204 response by main module
+        return True
 
 
 def delete_location(id):
